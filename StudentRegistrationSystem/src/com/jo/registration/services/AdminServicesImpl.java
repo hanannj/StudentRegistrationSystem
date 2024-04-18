@@ -234,7 +234,21 @@ public class AdminServicesImpl implements AdminServices{
         }
 		System.out.println(Department.courses.toString());
 	}
-	public static void viewStudent() {}
-	public static void addInstructor() {}
+	public static void viewStudent() throws ErrorHandling {
+		try (Scanner enterID = new Scanner(System.in)) {
+			System.out.print("Enter student's ID to view:\n");
+			String id = enterID.nextLine();
+			for (int i = 0; i<Data.students.size(); i++) {
+				Student studentIndex = Data.students.get(i);
+				if (studentIndex.getStudentID().equals(id)) {
+					System.out.println(studentIndex.toString());
+				}
+			}
+		}
+		catch (Exception ex) {
+            throw new ErrorHandling("Error occurred while viewing a student", ex);
+        }
+	}
+	//public static void addInstructor() {}
 
 }

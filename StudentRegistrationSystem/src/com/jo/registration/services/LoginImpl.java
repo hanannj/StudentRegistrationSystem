@@ -184,5 +184,4 @@ public class LoginImpl implements Login{
             throw new ErrorHandling("Error occurred while choosing", ex);
         }
 	}
-	
 }
