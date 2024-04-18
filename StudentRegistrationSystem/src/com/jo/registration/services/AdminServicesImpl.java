@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import com.jo.registration.bo.Course;
 import com.jo.registration.bo.Department;
+import com.jo.registration.bo.Instructor;
 import com.jo.registration.bo.Student;
 import com.jo.registration.data.*;
 import com.jo.registration.errorHandling.ErrorHandling;
@@ -249,6 +250,27 @@ public class AdminServicesImpl implements AdminServices{
             throw new ErrorHandling("Error occurred while viewing a student", ex);
         }
 	}
-	//public static void addInstructor() {}
+	public static void addInstructor() throws ErrorHandling {
+		// enter instructor info
+		try (Scanner input = new Scanner(System.in)) {
+			System.out.println("Instructor First Name: ");
+			String firstName = input.nextLine();
+			System.out.println("Instructor Last Name: ");
+			String lastName = input.nextLine(); 
+			String username = firstName+lastName;
+			String password = "1234"; 
+					
+			// add the instructor to database
+			Instructor newInstructor = new Instructor(firstName,lastName,username,password);
+			int in = Department.instructors.indexOf(newInstructor);
+			System.out.println(Department.instructors.get(in).toString());
+					
+			input.close();
+
+		}
+		catch (Exception ex) {
+			throw new ErrorHandling("Error occurred during instructor registration", ex);
+        }
+	}
 
 }

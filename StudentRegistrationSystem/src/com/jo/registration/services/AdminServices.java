@@ -1,7 +1,7 @@
 package com.jo.registration.services;
 
 public interface AdminServices {
-	//public static void addInstructor() {};
+	public static void addInstructor() {};
 	public static void registerStudent() {};
 	public static void addCourse() {};
 	public static void deleteCourse() {};
