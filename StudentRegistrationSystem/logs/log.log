@@ -53,3 +53,6 @@
 16:02:52.043 [main] INFO  com.jo.registration.logging.Logging - Wrong username or password
 16:03:20.521 [main] INFO  com.jo.registration.logging.Logging - Wrong username or password
 11:43:16.518 [main] ERROR com.jo.registration.logging.Logging - Error occurred while Logging in
+14:48:33.221 [main] ERROR com.jo.registration.logging.Logging - Error occurred while Logging in
+14:49:05.727 [main] ERROR com.jo.registration.logging.Logging - Error occurred while Logging in
+14:49:56.711 [main] ERROR com.jo.registration.logging.Logging - Error occurred while Logging in

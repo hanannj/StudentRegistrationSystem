@@ -3,18 +3,19 @@ package com.jo.registration.data;
 import com.jo.registration.errorHandling.ErrorHandling;
 import com.jo.registration.logging.Logging;
 import com.jo.registration.services.LoginImpl;
-
 import java.util.Scanner;
-
 import com.jo.registration.bo.*;
 
 public class Main {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ErrorHandling {
 		
-		User admin = new Admin("Dummy","Submission","Admin","Admin");
+		MySQLConnection mySQLConnection = new MySQLConnection();
+        mySQLConnection.connect();
+		
+		/*User admin = new Admin("Dummy","Submission","Admin","Admin");
 		User instructor = new Instructor("Bob","The Builder","instructor","instructor");
-		User student = new Student("Peter","Parker","student","student");
+		User student = new Student("Peter","Parker","student","student");*/
 		
 		Scanner input = new Scanner(System.in);
 		Scanner input2 = new Scanner(System.in) ;

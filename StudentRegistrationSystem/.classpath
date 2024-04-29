@@ -9,5 +9,6 @@
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="lib" path="D:/apache-log4j-2.23.1-bin/log4j-api-2.23.1.jar"/>
 	<classpathentry kind="lib" path="D:/apache-log4j-2.23.1-bin/log4j-core-2.23.1.jar"/>
+	<classpathentry kind="lib" path="D:/mysql-connector-j-8.2.0/mysql-connector-j-8.2.0/mysql-connector-j-8.2.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
