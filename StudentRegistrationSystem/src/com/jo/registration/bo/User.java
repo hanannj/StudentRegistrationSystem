@@ -5,10 +5,9 @@ public class User {
 
 	public User() {}
 	
-	public User(String fN, String lN, String usn, String psw) {
+	public User(String fN, String lN, String psw) {
 		firstName = fN;
 		lastName = lN;
-		username = usn;
 		password = psw;
 	}
 

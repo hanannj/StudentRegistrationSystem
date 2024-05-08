@@ -1,5 +1,9 @@
 package com.jo.registration.services;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Scanner;
 
 import com.jo.registration.bo.Admin;
@@ -7,58 +11,60 @@ import com.jo.registration.bo.Department;
 import com.jo.registration.bo.Instructor;
 import com.jo.registration.bo.Student;
 import com.jo.registration.data.Data;
+import com.jo.registration.data.MySQLConnection;
 import com.jo.registration.errorHandling.ErrorHandling;
 import com.jo.registration.logging.Logging;
 
 public class LoginImpl implements Login{
-	public static void Login(int choice, String username, String password) throws ErrorHandling{
+	static Connection conn = MySQLConnection.conn;
+	public static void Login(int choice, String id, String password) throws ErrorHandling{
+			boolean rs = false;
 			//Check if username and password are correct
 			if (choice == 1) {
-				Admin admin = new Admin();
-				for (int i = 0; i<Data.admins.size(); i++) {
-					admin = Data.admins.get(i);
-					if (username.equals(admin.getUsername()) && password.equals(admin.getPassword()))
+				try {
+					Statement stmt = conn.createStatement();
+					String query = "SELECT * FROM users WHERE id = '"+ id +"' AND password = '"+ password+"';";
+					rs = stmt.execute(query);
+					if (rs)
 						adminChoices();
 					else //{System.out.println("Wrong username or password");
 						Logging.logger.info("Wrong username or password");
-			}
-			}
-			
+				} catch (SQLException e) {
+					throw new ErrorHandling("Error occurred during accessing SQL tables", e);
+					}}
+		
 			if (choice == 2) {
-				Student student = new Student();				
-				try (Scanner login = new Scanner(System.in);
-						Scanner firstTimeLogin = new Scanner (System.in)) {
-					
-					for (int i = 0; i<Data.students.size(); i++) {
-							student = Data.students.get(i);
-							if (username.equals(student.getUsername()) && password.equals(student.getPassword())) {
-								System.out.print("Is this your first time log? 1. Yes	2. No\n");
-								int firstLog = firstTimeLogin.nextInt();
-								if (firstLog == 1) {
-									//Let the user create a new password				
-									System.out.print("Enter a new password:\n");
-									String newPassword = login.nextLine();
-									student.setPassword(newPassword);
-									System.out.println("Password changed successfully.\n");
-								}
-								studentChoices();}
-							else //System.out.println("Wrong username or password");
-								Logging.logger.info("Wrong username or password");}
-			}
-				catch (Exception ex) {
-		            throw new ErrorHandling("Error occurred while Logging in", ex);
+				try {
+					Statement stmt = conn.createStatement();
+					String query = "SELECT * FROM users WHERE id = '"+ id +"' AND password = '"+ password+"';";
+					rs = stmt.execute(query);
+					if (rs)
+						studentChoices();
+					else //{System.out.println("Wrong username or password");
+						Logging.logger.info("Wrong username or password");
+				} catch (SQLException e) {
+					throw new ErrorHandling("Error occurred during accessing SQL tables", e);
 		        }}
 			
 			if (choice == 3) {  
-				Instructor instructor = new Instructor();
-				
-				for (int i = 0; i<Department.instructors.size(); i++) {
+				try {
+					Statement stmt = conn.createStatement();
+					String query = "SELECT * FROM users WHERE id = '"+ id +"' AND password = '"+ password+"';";
+					rs = stmt.execute(query);
+					if (rs)
+						instructorChoices();
+					else //{System.out.println("Wrong username or password");
+						Logging.logger.info("Wrong username or password");
+				} catch (SQLException e) {
+					throw new ErrorHandling("Error occurred during accessing SQL tables", e);
+					}
+				/*for (int i = 0; i<Department.instructors.size(); i++) {
 					instructor = Department.instructors.get(i);
 					if (username.equals(instructor.getUsername()) && password.equals(instructor.getPassword()))
 						instructorChoices();
 					else //System.out.println("Wrong username or password");
 						Logging.logger.info("Wrong username or password");
-			}}
+			}*/}
 			
 			if (choice == 4)
 				System.exit(0);

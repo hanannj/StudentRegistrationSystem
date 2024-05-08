@@ -1,5 +1,10 @@
 package com.jo.registration.services;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Scanner;
 
 import com.jo.registration.bo.Course;
@@ -10,6 +15,7 @@ import com.jo.registration.data.*;
 import com.jo.registration.errorHandling.ErrorHandling;
 
 public class AdminServicesImpl implements AdminServices{
+	static Connection conn = MySQLConnection.conn;
 	
 	public static void registerStudent() throws ErrorHandling {
 		// enter student info
@@ -17,17 +23,30 @@ public class AdminServicesImpl implements AdminServices{
 			System.out.println("Student First Name: ");
 			String firstName = input.nextLine();
 			System.out.println("Student Last Name: ");
-			String lastName = input.nextLine(); 
-			String username = firstName+lastName;
-			String password = "1234"; 
+			String lastName = input.nextLine();
+			System.out.println("Student Department: ");
+			String department = input.nextLine();
+			System.out.println("Student Nationality: ");
+			String address = input.nextLine();
+			System.out.println("Student Address: ");
+			String nationality = input.nextLine();
+			String password = "12345678"; 
 			
 			// add the student to database
-			Student newStudent = new Student(firstName,lastName,username,password);
-			int in = Data.students.indexOf(newStudent);
-			System.out.println(Data.students.get(in).toString());
-			
+			Student newStudent = new Student(firstName,lastName,password);
+			Connection conn = MySQLConnection.conn;
+			try {
+				Statement stmt = conn.createStatement();
+				String query = "INSERT INTO users ('first_name', 'last_name', 'password') VALUES ('" + firstName + "', '" + lastName + "', '" +
+							password + "')";
+				stmt.execute(query);
+				String query2 = "INSERT INTO student ('nationality','address','department') VALUES "
+						+ "('" + nationality + "', '" + address +"', '" + department + "')";
+				stmt.execute(query2);
+			} catch (SQLException e) {
+				throw new ErrorHandling("Error occurred during accessing SQL tables", e);
+			}
 			input.close();
-
 		}
 		catch (Exception ex) {
             throw new ErrorHandling("Error occurred during student registration", ex);
@@ -44,15 +63,24 @@ public class AdminServicesImpl implements AdminServices{
 			System.out.print("Course ID: ");
 			String courseID = input.nextLine();
 			
-			System.out.println("Course Instructor: ");
-			String courseInstructor = input.nextLine();
+			//System.out.println("Course Instructor: ");
+			//String courseInstructor = input.nextLine();
 			
 			System.out.print("Max # of Students: ");
-			int maxStudents = input.nextInt();		
+			int maxStudents = input.nextInt();
+			
+			System.out.print("Department ID: ");
+			int departmentID = input.nextInt();
+			
 			// add the course to database
-			Course newCourse = new Course (courseName,courseID,maxStudents,null);
-			Department.courses.add(newCourse);
-			System.out.println("Course added");
+			try {
+				Statement stmt = conn.createStatement();
+				String query = "INSERT INTO course VALUES ('"+ courseName + "', " + courseID + ", " +
+				maxStudents + ", " + departmentID +");";
+				stmt.execute(query);}
+			catch (SQLException e) {
+				throw new ErrorHandling("Error occurred during accessing SQL tables", e);
+			}
 		}
 		catch (Exception ex) {
             throw new ErrorHandling("Error occurred while adding course", ex);
@@ -61,37 +89,51 @@ public class AdminServicesImpl implements AdminServices{
 	
 	public static void deleteCourse() throws ErrorHandling {
 		// enter course info
-		Course course = new Course();
 		try (Scanner input = new Scanner(System.in)) {
 			System.out.print("Enter course ID: ");
 			String courseID = input.nextLine();
-			//remove the course from database
-			for (int i = 0; i<Department.courses.size(); i++) {
-				course = Department.courses.get(i);
-				if (course.getCourseID().equals(courseID)) {
-					Department.courses.remove(i);
-					System.out.println("Course deleted");
+			//remove the department from database
+			try {
+				Statement stmt = conn.createStatement();
+				String query = "DELETE FROM course WHERE course_id = "+ courseID;
+				stmt.execute(query);}
+			catch (SQLException e) {
+				throw new ErrorHandling("Error occurred during accessing SQL tables", e);
+					}
 				}
-				else System.out.println("Course not found");
-			}
-		}
 		catch (Exception ex) {
-            throw new ErrorHandling("Error occurred while deleting course", ex);
-        }
+			throw new ErrorHandling("Error occurred while deleting department", ex);
+		        }
 	}
 	
-	public static void viewCourses() {
-
-		System.out.println(Department.courses.toString());
+	public static void viewCourses() throws ErrorHandling {
+		ResultSet rs = null;
+		PreparedStatement p = null;
+		try {
+			Statement stmt = conn.createStatement();
+			String query = "SELECT * FROM course";
+			p = conn.prepareStatement(query);
+			rs = p.executeQuery();
+			
+			while (rs.next()) {
+				String courseName = rs.getString("course_name");
+                int courseID = rs.getInt("course_id");
+                int maxStudents = rs.getInt("max_students");
+                int enrolledStudents = rs.getInt("enrolled_students");
+                int departmentID = rs.getInt("department_id");
+                System.out.println(courseName + "\t\t" + courseID
+                                   + "\t\t" + maxStudents + "\t\t" + enrolledStudents + "\t\t" + departmentID);
+            }
+		} catch (SQLException e) {
+			throw new ErrorHandling("Error occurred during accessing SQL tables", e);
+		}
 	
 }
 	public static void editCourse() throws ErrorHandling {
-		Course course = new Course();
 		try (Scanner input = new Scanner(System.in)) {
 			//Scanner input2 = new Scanner(System.in);
 			System.out.print("Course ID: ");
 			String courseID = input.nextLine();
-			int courseIndex = 0;
 			
 			//Ask user what they want to edit
 			System.out.print("What would you like to edit?\n");
@@ -100,7 +142,31 @@ public class AdminServicesImpl implements AdminServices{
 			
 			int choice = input.nextInt();
 			
-			for (int i = 0; i<Department.courses.size(); i++) {
+			if (choice == 1) {
+				System.out.print("Enter new max number of students\n");
+				int maxNo = input.nextInt();
+				try {
+					Statement stmt = conn.createStatement();
+					String query = "UPDATE course SET max_students = "+ maxNo +"WHERE course_id = " + courseID;
+					stmt.execute(query);}
+				catch (SQLException e) {
+					throw new ErrorHandling("Error occurred during accessing SQL tables", e);
+				}
+			}
+			if (choice == 2) {
+				System.out.print("Enter new instructor\n");
+				String instructor = input.nextLine();
+				try {
+					Statement stmt = conn.createStatement();
+					String query = "UPDATE instructorcourse SET instructor_id = "+ instructor +
+							"WHERE course_id = " + courseID;
+					stmt.execute(query);}
+				catch (SQLException e) {
+					throw new ErrorHandling("Error occurred during accessing SQL tables", e);
+				}
+			}
+			
+			/*for (int i = 0; i<Department.courses.size(); i++) {
 				course = Department.courses.get(i);
 				courseIndex = Department.courses.indexOf(Department.courses.get(i));
 				
@@ -118,49 +184,65 @@ public class AdminServicesImpl implements AdminServices{
 						break;
 					}
 				
-			}
+			}*/
 		}
 		catch (Exception ex) {
             throw new ErrorHandling("Error occurred while editing course", ex);
         }
-		System.out.println(Department.courses.toString());	
 	}
+	
 	public static void displayInfo() throws ErrorHandling {
-		Course course = new Course(); 
+		ResultSet rs = null;
+		PreparedStatement p = null;
 		try (Scanner input = new Scanner(System.in)) {
 			//Ask user for Course ID
 			System.out.print("Enter course ID: ");
 			String courseID = input.nextLine();
 			
-			for (int i = 0; i<Department.courses.size(); i++) {
-				course = Department.courses.get(i);
-				if (course.getCourseID().equals(courseID)) {
-					System.out.println(Department.courses.get(i));
-				}
-			}
-		}
+			try {
+				String query = "SELECT * FROM course WHERE course_id ="+courseID;
+				p = conn.prepareStatement(query);
+				rs = p.executeQuery();
+				
+				while (rs.next()) {
+					String courseName = rs.getString("course_name");
+	                int courseID2 = rs.getInt("course_id");
+	                int maxStudents = rs.getInt("max_students");
+	                int enrolledStudents = rs.getInt("enrolled_students");
+	                int departmentID = rs.getInt("department_id");
+	                System.out.println(courseName + "\t\t" + courseID2
+	                                   + "\t\t" + maxStudents + "\t\t" + enrolledStudents + "\t\t" + departmentID);
+	            }
+			} catch (SQLException e) {
+				throw new ErrorHandling("Error occurred during accessing SQL tables", e);}}
 		catch (Exception ex) {
-            throw new ErrorHandling("Error occurred while deleting course", ex);
+            throw new ErrorHandling("Error occurred while displaying information", ex);
         }
 	}
+	
 	public static void studentNamesInCourse() throws ErrorHandling {
 		//Print out list of names 
 		//Ask user for courseID 
-		Course course = new Course();
+		PreparedStatement p = null;
+		ResultSet rs = null;
 		try (Scanner input = new Scanner(System.in)) {
-			System.out.print("Enter course ID: ");
 			String courseID = input.nextLine();
-					//Remove index from ArrayList of courses
-							
-			for (int i = 0; i<Department.courses.size(); i++) {
-				course = Department.courses.get(i);
-				if (course.getCourseID().equals(courseID)) {
-					System.out.println(course.getStudents().toString());
-				}
+
+			try {
+				String query = "SELECT * FROM studentcourses WHERE course_id = "+courseID;
+				p = conn.prepareStatement(query);
+				rs = p.executeQuery();
+				while (rs.next()) {
+					int studentID = rs.getInt("max_students");
+	                int courseID2 = rs.getInt("course_id");
+	                System.out.println(studentID + "\t\t" + courseID2);
+	            }
+			} catch (SQLException e) {
+				throw new ErrorHandling("Error occurred during accessing SQL tables", e);
 			}
 		}
 		catch (Exception ex) {
-            throw new ErrorHandling("Error occurred while deleting course", ex);
+            throw new ErrorHandling("Error occurred while displaying students names in course", ex);
         }
 	}
 	public static void addDepartment() throws ErrorHandling {
@@ -173,9 +255,13 @@ public class AdminServicesImpl implements AdminServices{
 			String departmentID = input.nextLine();
 				
 			// add the department to database
-			Department newDepartment = new Department (departmentID,departmentName);
-			Data.departments.add(newDepartment);
-			System.out.println("Department added");
+			try {
+				Statement stmt = conn.createStatement();
+				String query = "INSERT INTO department VALUES ("+ departmentName + "," + departmentID + ");";
+				stmt.execute(query);}
+			catch (SQLException e) {
+				throw new ErrorHandling("Error occurred during accessing SQL tables", e);
+			}
 			}
 		catch (Exception ex) {
             throw new ErrorHandling("Error occurred while adding department", ex);
@@ -186,91 +272,117 @@ public class AdminServicesImpl implements AdminServices{
 		// enter department info
 		Department department = new Department();
 		try (Scanner input = new Scanner(System.in)) {
-			System.out.print("Enter course ID: ");
+			System.out.print("Enter department ID: ");
 			String departmentID = input.nextLine();
-			//remove the course from database
-			for (int i = 0; i<Department.courses.size(); i++) {
-				department = Data.departments.get(i);
-				if (department.getDepartmentID().equals(departmentID)) { /////////////////////////////
-					Department.courses.remove(i);
-					System.out.println("Course deleted");
-				}
-				else System.out.println("Course not found");
+			//remove the department from database
+			try {
+				Statement stmt = conn.createStatement();
+				String query = "DELETE FROM department WHERE department_id = "+ departmentID;
+				stmt.execute(query);}
+			catch (SQLException e) {
+				throw new ErrorHandling("Error occurred during accessing SQL tables", e);
 			}
 		}
 		catch (Exception ex) {
             throw new ErrorHandling("Error occurred while deleting department", ex);
         }
 	}
+	
 	public static void editDepartment() throws ErrorHandling {
-		Department department = new Department();
 		try (Scanner input = new Scanner(System.in)) {
 			//Scanner input2 = new Scanner(System.in);
 			System.out.print("Department ID: ");
 			String departmentID = input.nextLine();
-			int departmentIndex = 0;
 			
 			//Ask user what they want to edit
 			System.out.print("What would you like to edit?\n");
-			System.out.print("1. Department instructors\n");
+			System.out.print("1. Department name\n");
 			
 			int choice = input.nextInt();
 			
-			for (int i = 0; i<Data.departments.size(); i++) {
-				department = Data.departments.get(i);
-				departmentIndex = Data.departments.indexOf(Data.departments.get(i));
-				
-					if (choice == 1 && departmentID.equals(department.getDepartmentID())) {
-						System.out.print("Department instructors:");
-						String instructorID = input.nextLine();
-						Data.departments.get(departmentIndex);
-						//department.setMaxStudents(newMax);
-						//break;
-					}
-				
+			if (choice == 1) {
+				System.out.print("Enter a new name\n");
+				int name = input.nextInt();
+				try {
+					Statement stmt = conn.createStatement();
+					String query = "UPDATE department SET department_name = '"+ name + "' WHERE department_id = "
+							+ departmentID;
+					stmt.execute(query);}
+				catch (SQLException e) {
+					throw new ErrorHandling("Error occurred during accessing SQL tables", e);
+				}
 			}
+			
 		}
 		catch (Exception ex) {
-            throw new ErrorHandling("Error occurred while deleting course", ex);
+            throw new ErrorHandling("Error occurred while editing department", ex);
         }
-		System.out.println(Department.courses.toString());
 	}
 	public static void viewStudent() throws ErrorHandling {
+		ResultSet rs = null;
+		PreparedStatement p = null;
 		try (Scanner enterID = new Scanner(System.in)) {
 			System.out.print("Enter student's ID to view:\n");
 			String id = enterID.nextLine();
-			for (int i = 0; i<Data.students.size(); i++) {
-				Student studentIndex = Data.students.get(i);
-				if (studentIndex.getStudentID().equals(id)) {
-					System.out.println(studentIndex.toString());
-				}
-			}
-		}
+
+			try {
+				String query = "SELECT id, first_name, last_name FROM users WHERE student_id = " + id;
+				p = conn.prepareStatement(query);
+				rs = p.executeQuery();
+				while (rs.next()) {
+					int studentID = rs.getInt("id");
+					String firstName = rs.getString("first_name");
+	                String lastName = rs.getString("last_name");
+	                System.out.println(studentID + "\t\t" + firstName
+	                                   + "\t\t" + lastName + "\t\t"); }
+				rs = null;
+				String query2 = "SELECT nationality, address, department_id FROM student WHERE student_id = " + id;
+				p = conn.prepareStatement(query);
+				rs = p.executeQuery();
+				while (rs.next()) {
+					String nationality = rs.getString("nationality");
+	                String address = rs.getString("address");
+	                int departmentID = rs.getInt("department_id");
+	                System.out.println(departmentID + "\t\t" + nationality
+	                                   + "\t\t" + address + "\t\t");
+	            }} 
+			catch (SQLException e) {
+				throw new ErrorHandling("Error occurred during accessing SQL tables", e);
+			}}
 		catch (Exception ex) {
             throw new ErrorHandling("Error occurred while viewing a student", ex);
         }
 	}
+	
 	public static void addInstructor() throws ErrorHandling {
 		// enter instructor info
 		try (Scanner input = new Scanner(System.in)) {
 			System.out.println("Instructor First Name: ");
 			String firstName = input.nextLine();
 			System.out.println("Instructor Last Name: ");
-			String lastName = input.nextLine(); 
-			String username = firstName+lastName;
-			String password = "1234"; 
+			String lastName = input.nextLine();
+			System.out.println("Instructor Department: ");
+			String department = input.nextLine();
+			System.out.println("Instructor Nationality: ");
+			String nationality = input.nextLine();
+			System.out.println("Instructor Address: ");
+			String address = input.nextLine();
+			String password = "12345678"; 
 					
 			// add the instructor to database
-			Instructor newInstructor = new Instructor(firstName,lastName,username,password);
-			int in = Department.instructors.indexOf(newInstructor);
-			System.out.println(Department.instructors.get(in).toString());
-					
+			Connection conn = MySQLConnection.conn;
+			try {
+				Statement stmt = conn.createStatement();
+				String query = "INSERT INTO users VALUES ('" + firstName + "', '" + lastName + "', " + password + "')";
+				stmt.execute(query);
+				String query2 = "INSERT INTO instructor ('nationality','address','department') VALUES ('" 
+				+ nationality + "', '" + address + "', '" + department + "')";
+				stmt.execute(query2);
+			} catch (SQLException e) {
+				throw new ErrorHandling("Error occurred during accessing SQL tables", e);
+					}
 			input.close();
-
-		}
+				}
 		catch (Exception ex) {
-			throw new ErrorHandling("Error occurred during instructor registration", ex);
-        }
-	}
-
-}
+	           throw new ErrorHandling("Error occurred during student registration", ex);	}
+}}

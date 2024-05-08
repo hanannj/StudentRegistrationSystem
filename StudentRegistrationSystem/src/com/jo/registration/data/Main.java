@@ -22,18 +22,19 @@ public class Main {
 		System.out.print("1. Admin\n" + "2. Student\n" + "3. Instructor\n" + "4. Exit\n");
 		int choice = input.nextInt();
 		
-		System.out.println("Username: ");
-		String username = input2.nextLine();
+		System.out.println("ID: ");
+		String id = input2.nextLine();
 		
 		System.out.println("Password: ");
 		String password = input2.nextLine();
 		
 		try {
-			LoginImpl.Login(choice, username, password);
+			LoginImpl.Login(choice, id, password);
 		} catch (ErrorHandling e) {
 			e.printStackTrace();
 		}
 		
+		mySQLConnection.closeConnection();
 	}
 
 }
