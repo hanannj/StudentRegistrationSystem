@@ -16,13 +16,13 @@ import com.jo.registration.errorHandling.ErrorHandling;
 import com.jo.registration.logging.Logging;
 
 public class LoginImpl implements Login{
-	static Connection conn = MySQLConnection.conn;
+	
 	public static void Login(int choice, String id, String password) throws ErrorHandling{
 			boolean rs = false;
 			//Check if username and password are correct
 			if (choice == 1) {
 				try {
-					Statement stmt = conn.createStatement();
+					Statement stmt = MySQLConnection.conn.createStatement();
 					String query = "SELECT * FROM users WHERE id = '"+ id +"' AND password = '"+ password+"';";
 					rs = stmt.execute(query);
 					if (rs)
@@ -35,7 +35,7 @@ public class LoginImpl implements Login{
 		
 			if (choice == 2) {
 				try {
-					Statement stmt = conn.createStatement();
+					Statement stmt = MySQLConnection.conn.createStatement();
 					String query = "SELECT * FROM users WHERE id = '"+ id +"' AND password = '"+ password+"';";
 					rs = stmt.execute(query);
 					if (rs)
@@ -48,7 +48,7 @@ public class LoginImpl implements Login{
 			
 			if (choice == 3) {  
 				try {
-					Statement stmt = conn.createStatement();
+					Statement stmt = MySQLConnection.conn.createStatement();
 					String query = "SELECT * FROM users WHERE id = '"+ id +"' AND password = '"+ password+"';";
 					rs = stmt.execute(query);
 					if (rs)

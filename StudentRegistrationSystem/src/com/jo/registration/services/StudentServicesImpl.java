@@ -15,7 +15,6 @@ import com.jo.registration.data.MySQLConnection;
 import com.jo.registration.errorHandling.ErrorHandling;
 
 public class StudentServicesImpl implements StudentServices{
-	static Connection conn = MySQLConnection.conn;
 	
 	public static void registerCourse() throws ErrorHandling {
 		Course course = new Course();
@@ -30,7 +29,7 @@ public class StudentServicesImpl implements StudentServices{
 			String id = input.nextLine();
 			
 			try {
-				Statement stmt = conn.createStatement();
+				Statement stmt = MySQLConnection.conn.createStatement();
 				String query = "INSERT INTO studentcourses VALUES ("+ id + ", " + courseID + ");";
 				stmt.execute(query);
 			} catch (SQLException e) {
@@ -66,7 +65,7 @@ public class StudentServicesImpl implements StudentServices{
 			String id = input.nextLine();
 			
 			try {
-				Statement stmt = conn.createStatement();
+				Statement stmt = MySQLConnection.conn.createStatement();
 				String query = "DELETE FROM studentcourses WHERE student_id ="+ id + "AND course_id = "
 				+ courseID + ";";
 				stmt.execute(query);
@@ -89,7 +88,7 @@ public class StudentServicesImpl implements StudentServices{
 				System.out.println("Verify ID: ");
 				String id = input.nextLine();
 				String query = "SELECT * FROM studentcourses WHERE student_id = " + id;
-				p = conn.prepareStatement(query);
+				p = MySQLConnection.conn.prepareStatement(query);
 				rs = p.executeQuery();
 				while (rs.next()) {
 	                int student_id = rs.getInt("student_id");
@@ -109,7 +108,7 @@ public class StudentServicesImpl implements StudentServices{
 		PreparedStatement p = null;
 		try {
 			String query = "SELECT * FROM course";
-			p = conn.prepareStatement(query);
+			p = MySQLConnection.conn.prepareStatement(query);
 			rs = p.executeQuery();
 			
 			while (rs.next()) {

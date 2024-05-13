@@ -15,7 +15,6 @@ import com.jo.registration.data.*;
 import com.jo.registration.errorHandling.ErrorHandling;
 
 public class AdminServicesImpl implements AdminServices{
-	static Connection conn = MySQLConnection.conn;
 	
 	public static void registerStudent() throws ErrorHandling {
 		// enter student info
@@ -34,9 +33,8 @@ public class AdminServicesImpl implements AdminServices{
 			
 			// add the student to database
 			Student newStudent = new Student(firstName,lastName,password);
-			Connection conn = MySQLConnection.conn;
 			try {
-				Statement stmt = conn.createStatement();
+				Statement stmt = MySQLConnection.conn.createStatement();
 				String query = "INSERT INTO users ('first_name', 'last_name', 'password') VALUES ('" + firstName + "', '" + lastName + "', '" +
 							password + "')";
 				stmt.execute(query);
@@ -74,7 +72,7 @@ public class AdminServicesImpl implements AdminServices{
 			
 			// add the course to database
 			try {
-				Statement stmt = conn.createStatement();
+				Statement stmt = MySQLConnection.conn.createStatement();
 				String query = "INSERT INTO course VALUES ('"+ courseName + "', " + courseID + ", " +
 				maxStudents + ", " + departmentID +");";
 				stmt.execute(query);}
@@ -94,7 +92,7 @@ public class AdminServicesImpl implements AdminServices{
 			String courseID = input.nextLine();
 			//remove the department from database
 			try {
-				Statement stmt = conn.createStatement();
+				Statement stmt = MySQLConnection.conn.createStatement();
 				String query = "DELETE FROM course WHERE course_id = "+ courseID;
 				stmt.execute(query);}
 			catch (SQLException e) {
@@ -110,9 +108,9 @@ public class AdminServicesImpl implements AdminServices{
 		ResultSet rs = null;
 		PreparedStatement p = null;
 		try {
-			Statement stmt = conn.createStatement();
+			Statement stmt = MySQLConnection.conn.createStatement();
 			String query = "SELECT * FROM course";
-			p = conn.prepareStatement(query);
+			p = MySQLConnection.conn.prepareStatement(query);
 			rs = p.executeQuery();
 			
 			while (rs.next()) {
@@ -146,7 +144,7 @@ public class AdminServicesImpl implements AdminServices{
 				System.out.print("Enter new max number of students\n");
 				int maxNo = input.nextInt();
 				try {
-					Statement stmt = conn.createStatement();
+					Statement stmt = MySQLConnection.conn.createStatement();
 					String query = "UPDATE course SET max_students = "+ maxNo +"WHERE course_id = " + courseID;
 					stmt.execute(query);}
 				catch (SQLException e) {
@@ -157,7 +155,7 @@ public class AdminServicesImpl implements AdminServices{
 				System.out.print("Enter new instructor\n");
 				String instructor = input.nextLine();
 				try {
-					Statement stmt = conn.createStatement();
+					Statement stmt = MySQLConnection.conn.createStatement();
 					String query = "UPDATE instructorcourse SET instructor_id = "+ instructor +
 							"WHERE course_id = " + courseID;
 					stmt.execute(query);}
@@ -201,7 +199,7 @@ public class AdminServicesImpl implements AdminServices{
 			
 			try {
 				String query = "SELECT * FROM course WHERE course_id ="+courseID;
-				p = conn.prepareStatement(query);
+				p = MySQLConnection.conn.prepareStatement(query);
 				rs = p.executeQuery();
 				
 				while (rs.next()) {
@@ -230,7 +228,7 @@ public class AdminServicesImpl implements AdminServices{
 
 			try {
 				String query = "SELECT * FROM studentcourses WHERE course_id = "+courseID;
-				p = conn.prepareStatement(query);
+				p = MySQLConnection.conn.prepareStatement(query);
 				rs = p.executeQuery();
 				while (rs.next()) {
 					int studentID = rs.getInt("max_students");
@@ -256,7 +254,7 @@ public class AdminServicesImpl implements AdminServices{
 				
 			// add the department to database
 			try {
-				Statement stmt = conn.createStatement();
+				Statement stmt = MySQLConnection.conn.createStatement();
 				String query = "INSERT INTO department VALUES ("+ departmentName + "," + departmentID + ");";
 				stmt.execute(query);}
 			catch (SQLException e) {
@@ -276,7 +274,7 @@ public class AdminServicesImpl implements AdminServices{
 			String departmentID = input.nextLine();
 			//remove the department from database
 			try {
-				Statement stmt = conn.createStatement();
+				Statement stmt = MySQLConnection.conn.createStatement();
 				String query = "DELETE FROM department WHERE department_id = "+ departmentID;
 				stmt.execute(query);}
 			catch (SQLException e) {
@@ -304,7 +302,7 @@ public class AdminServicesImpl implements AdminServices{
 				System.out.print("Enter a new name\n");
 				int name = input.nextInt();
 				try {
-					Statement stmt = conn.createStatement();
+					Statement stmt = MySQLConnection.conn.createStatement();
 					String query = "UPDATE department SET department_name = '"+ name + "' WHERE department_id = "
 							+ departmentID;
 					stmt.execute(query);}
@@ -327,7 +325,7 @@ public class AdminServicesImpl implements AdminServices{
 
 			try {
 				String query = "SELECT id, first_name, last_name FROM users WHERE student_id = " + id;
-				p = conn.prepareStatement(query);
+				p = MySQLConnection.conn.prepareStatement(query);
 				rs = p.executeQuery();
 				while (rs.next()) {
 					int studentID = rs.getInt("id");
@@ -337,7 +335,7 @@ public class AdminServicesImpl implements AdminServices{
 	                                   + "\t\t" + lastName + "\t\t"); }
 				rs = null;
 				String query2 = "SELECT nationality, address, department_id FROM student WHERE student_id = " + id;
-				p = conn.prepareStatement(query);
+				p = MySQLConnection.conn.prepareStatement(query);
 				rs = p.executeQuery();
 				while (rs.next()) {
 					String nationality = rs.getString("nationality");
@@ -370,9 +368,8 @@ public class AdminServicesImpl implements AdminServices{
 			String password = "12345678"; 
 					
 			// add the instructor to database
-			Connection conn = MySQLConnection.conn;
 			try {
-				Statement stmt = conn.createStatement();
+				Statement stmt = MySQLConnection.conn.createStatement();
 				String query = "INSERT INTO users VALUES ('" + firstName + "', '" + lastName + "', " + password + "')";
 				stmt.execute(query);
 				String query2 = "INSERT INTO instructor ('nationality','address','department') VALUES ('" 

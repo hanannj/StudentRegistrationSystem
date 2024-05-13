@@ -15,13 +15,13 @@ import com.jo.registration.data.MySQLConnection;
 import com.jo.registration.errorHandling.ErrorHandling;
 
 public class InstructorServicesImpl implements InstructorServices{
-	static Connection conn = MySQLConnection.conn;
+	
 	public static void viewCourses() throws ErrorHandling {
 		ResultSet rs = null;
 		PreparedStatement p = null;
 		try {
 			String query = "SELECT * FROM course";
-			p = conn.prepareStatement(query);
+			p = MySQLConnection.conn.prepareStatement(query);
 			rs = p.executeQuery();
 			
 			while (rs.next()) {
@@ -48,7 +48,7 @@ public class InstructorServicesImpl implements InstructorServices{
 			
 			try {
 				String query = "SELECT * FROM course WHERE course_id ="+courseID;
-				p = conn.prepareStatement(query);
+				p = MySQLConnection.conn.prepareStatement(query);
 				rs = p.executeQuery();
 				
 				while (rs.next()) {
@@ -83,7 +83,7 @@ public class InstructorServicesImpl implements InstructorServices{
 
 			try {
 				String query = "SELECT * FROM studentcourses WHERE course_id = "+courseID;
-				p = conn.prepareStatement(query);
+				p = MySQLConnection.conn.prepareStatement(query);
 				rs = p.executeQuery();
 				while (rs.next()) {
 					int studentID = rs.getInt("max_students");
@@ -114,7 +114,7 @@ public class InstructorServicesImpl implements InstructorServices{
 
 			try {
 				String query = "SELECT id, first_name, last_name FROM users WHERE student_id = " + id;
-				p = conn.prepareStatement(query);
+				p = MySQLConnection.conn.prepareStatement(query);
 				rs = p.executeQuery();
 				while (rs.next()) {
 					int studentID = rs.getInt("id");
@@ -125,7 +125,7 @@ public class InstructorServicesImpl implements InstructorServices{
 	            }
 				rs = null;
 				String query2 = "SELECT nationality, address, department_id FROM student WHERE student_id = " + id;
-				p = conn.prepareStatement(query);
+				p = MySQLConnection.conn.prepareStatement(query);
 				rs = p.executeQuery();
 				while (rs.next()) {
 					String nationality = rs.getString("nationality");

@@ -9,6 +9,6 @@ import com.jo.registration.errorHandling.ErrorHandling;
 import java.sql.ResultSet;
 
 public class MySQLServices {
-	  
+	 
 		  
 }
