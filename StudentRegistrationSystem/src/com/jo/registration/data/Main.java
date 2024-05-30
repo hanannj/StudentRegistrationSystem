@@ -13,10 +13,6 @@ public class Main {
 		MySQLConnection mySQLConnection = new MySQLConnection();
         mySQLConnection.connect();
 		
-		/*User admin = new Admin("Dummy","Submission","Admin","Admin");
-		User instructor = new Instructor("Bob","The Builder","instructor","instructor");
-		User student = new Student("Peter","Parker","student","student");*/
-		
 		Scanner input = new Scanner(System.in);
 		Scanner input2 = new Scanner(System.in) ;
 		System.out.print("1. Admin\n" + "2. Student\n" + "3. Instructor\n" + "4. Exit\n");

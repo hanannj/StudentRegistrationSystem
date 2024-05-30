@@ -1,8 +1,13 @@
-package com.jo.registration.bo;
+package com.jo.registration.boo;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
+@Entity(name="users")
 public class User {
-	private String username, password, firstName, lastName;
+	@Id
+	private int id;
+	private String password, firstName, lastName;
 
 	public User() {}
 	
@@ -12,12 +17,12 @@ public class User {
 		password = psw;
 	}
 
-	public String getUsername() {
-		return username;
+	public int getID() {
+		return id;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setID(int id) {
+		this.id = id;
 	}
 
 	public String getPassword() {
